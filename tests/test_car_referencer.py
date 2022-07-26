@@ -26,9 +26,7 @@ def tmp_test_folder(tmpdir_factory):
 
 
 def create_test_zarr(tmp_test_folder):
-    xr.tutorial.load_dataset("air_temperature").chunk(
-        {"time": 100, "lat": 5, "lon": 5}
-    ).to_zarr(str(tmp_test_folder) + "/example.zarr")
+    xr.tutorial.load_dataset("air_temperature").chunk().to_zarr(str(tmp_test_folder) + "/example.zarr")
 
 
 @pytest.fixture(scope="session")
@@ -41,9 +39,8 @@ def test_cars(tmp_test_folder):
     else:
         gopath = os.environ["HOME"] + "/go/bin"
     assert os.path.exists(gopath + "/linux2ipfs"), "linux2ipfs could not be found"
-    # use a small block target to force some files to be split into multiple blocks
     subprocess.check_output(
-        f"{gopath}/linux2ipfs -car-size 3382286 -block-target 8096 -driver car-{str(tmp_test_folder)}/example.%d.car -incremental-file {str(tmp_test_folder)}/old-example.json {str(tmp_test_folder)}/example.zarr",
+        f"{gopath}/linux2ipfs -car-size 3382286 -driver car-{str(tmp_test_folder)}/example.%d.car -incremental-file {str(tmp_test_folder)}/old-example.json {str(tmp_test_folder)}/example.zarr",
         shell=True,
     )
     return sorted(glob.glob(f"{str(tmp_test_folder)}/example.*.car"))
