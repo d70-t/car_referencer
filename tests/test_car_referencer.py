@@ -26,9 +26,7 @@ def tmp_test_folder(tmpdir_factory):
 
 
 def create_test_zarr(tmp_test_folder):
-    xr.tutorial.load_dataset("air_temperature").chunk(
-        {"time": 100, "lat": 5, "lon": 5}
-    ).to_zarr(str(tmp_test_folder) + "/example.zarr")
+    xr.tutorial.load_dataset("air_temperature").chunk().to_zarr(str(tmp_test_folder) + "/example.zarr")
 
 
 @pytest.fixture(scope="session")
